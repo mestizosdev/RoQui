@@ -7,8 +7,8 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.Immutable
 
 @Entity
-@Table(name = "v_versions")
 @Immutable
+@Table(name = "v_version")
 class Version {
     @Id
     val id: Int? = null

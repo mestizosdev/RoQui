@@ -7,10 +7,11 @@ plugins {
 	kotlin("jvm") version "1.9.20"
 	kotlin("plugin.spring") version "1.9.20"
 	kotlin("plugin.jpa") version "1.9.20"
+	kotlin("kapt") version "1.9.20"
 }
 
 group = "dev.mestizos"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.2"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_21
@@ -31,6 +32,9 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	// SystemUtils
 	implementation("org.apache.commons:commons-lang3:3.13.0")
+	// AutoMapper Enity to DTO
+	implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
+//	kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
 }
 
 tasks.withType<KotlinCompile> {
@@ -43,3 +47,4 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
