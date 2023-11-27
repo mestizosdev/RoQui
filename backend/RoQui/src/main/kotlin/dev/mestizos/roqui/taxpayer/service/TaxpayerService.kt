@@ -2,15 +2,15 @@ package dev.mestizos.roqui.taxpayer.service
 
 import dev.mestizos.roqui.taxpayer.dto.TaxpayerDto
 import dev.mestizos.roqui.taxpayer.mapper.TaxpayerMapperImpl
-import dev.mestizos.roqui.taxpayer.repository.TaxpayerRepository
+import dev.mestizos.roqui.taxpayer.repository.ITaxpayerRepository
 import org.springframework.stereotype.Service
 
 @Service
 class TaxpayerService {
 
-    private val taxPayerRepository: TaxpayerRepository
+    private val taxPayerRepository: ITaxpayerRepository
 
-    constructor(taxPayerRepository: TaxpayerRepository) {
+    constructor(taxPayerRepository: ITaxpayerRepository) {
         this.taxPayerRepository = taxPayerRepository
     }
 

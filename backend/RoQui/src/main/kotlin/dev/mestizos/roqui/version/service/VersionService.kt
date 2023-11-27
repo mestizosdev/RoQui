@@ -1,14 +1,14 @@
 package dev.mestizos.roqui.version.service
 
-import dev.mestizos.roqui.version.repository.VersionRepository
+import dev.mestizos.roqui.version.repository.IVersionRepository
 import org.springframework.stereotype.Service
 
 @Service
 class VersionService {
 
-    private val versionRepository: VersionRepository
+    private val versionRepository: IVersionRepository
 
-    constructor(versionRepository: VersionRepository) {
+    constructor(versionRepository: IVersionRepository) {
         this.versionRepository = versionRepository
     }
 

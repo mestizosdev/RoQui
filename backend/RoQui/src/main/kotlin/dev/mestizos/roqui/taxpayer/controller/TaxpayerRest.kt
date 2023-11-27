@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/roqui/v1")
-class TaxpayerController {
+class TaxpayerRest {
 
     @Autowired
     lateinit var taxpayerService: TaxpayerService
