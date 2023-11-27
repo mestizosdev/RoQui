@@ -1,6 +1,6 @@
 package dev.mestizos.roqui.invoice.service
 
-import dev.mestizos.roqui.invoice.model.ReportInvoice
+import dev.mestizos.roqui.invoice.dto.ReportInvoiceDto
 import dev.mestizos.roqui.invoice.repository.IReportInvoiceRepository
 import dev.mestizos.roqui.util.DateUtil
 import org.springframework.stereotype.Service
@@ -15,18 +15,29 @@ class ReportInvoiceService {
     }
 
     fun getInvoiceByDatesAndStatus(startDate: String, endDate: String, status: String)
-            : MutableList<ReportInvoice> {
+            : MutableList<ReportInvoiceDto> {
 
         val startDateForQuery = DateUtil.toDate(startDate)
         val endDateForQuery = DateUtil.toDate(endDate)
 
-        println(startDateForQuery)
-        println(endDateForQuery)
-
-        return reportInvoiceRepository.findByDatesAndStatus(
+        val result = reportInvoiceRepository.findByDatesAndStatus(
             startDateForQuery,
             endDateForQuery,
             status
         )
+
+        return result.map {
+            ReportInvoiceDto(
+                id = it.id,
+                code = it.code,
+                number = it.number,
+                date = it.date,
+                total = it.total,
+                identification = it.identification,
+                legal_name = it.legal_name,
+                email = it.email,
+                status = it.status
+            )
+        }.toMutableList()
     }
 }

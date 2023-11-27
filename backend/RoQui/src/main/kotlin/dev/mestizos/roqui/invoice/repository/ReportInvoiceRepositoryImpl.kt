@@ -17,7 +17,7 @@ class ReportInvoiceRepositoryImpl : IReportInvoiceRepository {
     override fun findByDatesAndStatus(startDate: Date, endDate: Date, status: String)
             : MutableList<ReportInvoice> {
 
-        val resultQuery = if (status.equals("Authorized")) {
+        if (status.equals("Authorized")) {
             return entityManager.createQuery(
                 "from ReportInvoice " +
                         "where date between :startDate and :endDate " +
@@ -36,8 +36,5 @@ class ReportInvoiceRepositoryImpl : IReportInvoiceRepository {
                 .setParameter("endDate", endDate)
                 .resultList as MutableList<ReportInvoice>
         }
-
-        resultQuery.
-        return resultQuery
     }
 }

@@ -1,8 +1,10 @@
 package dev.mestizos.roqui.invoice.controller
 
+import dev.mestizos.roqui.invoice.dto.ReportInvoiceDto
 import dev.mestizos.roqui.invoice.model.ReportInvoice
 import dev.mestizos.roqui.invoice.service.ReportInvoiceService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,10 +24,10 @@ class ReportInvoiceRest {
         @PathVariable(value = "endDate") endDate: String,
         @PathVariable(value = "status") status: String
     )
-            : ResponseEntity<MutableList<ReportInvoice>> {
+            : ResponseEntity<MutableList<ReportInvoiceDto>> {
 
         val reportInvoice = reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, status)
 
-        return ResponseEntity.ok().body(mutableListOf())
+        return ResponseEntity<MutableList<ReportInvoiceDto>>(reportInvoice, HttpStatus.OK)
     }
 }
