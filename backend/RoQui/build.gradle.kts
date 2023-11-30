@@ -19,6 +19,7 @@ java {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
@@ -35,6 +36,7 @@ dependencies {
 	// AutoMapper Enity to DTO
 	implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
 //	kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
+	implementation("dev.mestizos.printer:RoquiPrinter:1.0.0")
 }
 
 tasks.withType<KotlinCompile> {

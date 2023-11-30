@@ -1,7 +1,6 @@
 package dev.mestizos.roqui.invoice.controller
 
 import dev.mestizos.roqui.invoice.dto.ReportInvoiceDto
-import dev.mestizos.roqui.invoice.model.ReportInvoice
 import dev.mestizos.roqui.invoice.service.ReportInvoiceService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -18,7 +17,7 @@ class ReportInvoiceRest {
     @Autowired
     lateinit var reportInvoiceService: ReportInvoiceService
 
-    @GetMapping("/report/invoice/dates/{startDate}/{endDate}/status/{status}")
+    @GetMapping("/invoice/report/dates/{startDate}/{endDate}/status/{status}")
     fun getInvoiceByDatesAndStatus(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,

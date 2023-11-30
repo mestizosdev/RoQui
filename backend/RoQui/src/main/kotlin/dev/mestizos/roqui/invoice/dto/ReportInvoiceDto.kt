@@ -3,7 +3,7 @@ package dev.mestizos.roqui.invoice.dto
 import java.math.BigDecimal
 import java.util.Date
 
-class ReportInvoiceDto(
+data class ReportInvoiceDto(
     val id: Long? = null,
     val code: String? = null,
     val number: String? = null,
