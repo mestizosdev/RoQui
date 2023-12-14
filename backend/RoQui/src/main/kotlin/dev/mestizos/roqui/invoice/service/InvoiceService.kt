@@ -23,7 +23,7 @@ class InvoiceService {
         this.establishmentRepository = establishmentRepository
     }
 
-    fun getInvoice(code: String, number: String): TributaryInformation {
+    fun getInvoiceAndTaxpayer(code: String, number: String): TributaryInformation {
         val invoice = invoiceRepository.findByCodeAndNumber(code, number)
         val taxpayer = taxPayerRepository.findById(1).get()
         val establishment = establishmentRepository.findByCode(invoice.establishment!!)

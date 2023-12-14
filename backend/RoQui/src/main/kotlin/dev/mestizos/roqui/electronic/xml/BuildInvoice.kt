@@ -15,10 +15,10 @@ class BuildInvoice(
     val invoiceService: InvoiceService
 ) {
 
-    val factura = Factura()
-
+    private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
 
     fun xml(): String {
+        val factura = Factura()
         try {
             factura.id = "comprobante"
             factura.version = "2.1.0"
@@ -40,7 +40,7 @@ class BuildInvoice(
                 ), "UTF-8"
             )
 
-            marshaller.marshal(this.factura, out)
+            marshaller.marshal(factura, out)
             println(stringWriter)
         } catch (e: Exception) {
             println(e.message)
@@ -51,25 +51,23 @@ class BuildInvoice(
     private fun buildInfoTributaria(): InfoTributaria {
         val informacionTributaria = InfoTributaria()
 
-        val i = invoiceService.getInvoice(code, number)
+        informacionTributaria.ruc = tributaryInformation.taxpayer.identification
+        informacionTributaria.razonSocial = tributaryInformation.taxpayer.legalName
+        informacionTributaria.nombreComercial = tributaryInformation.establishmentBusinessName
 
-        informacionTributaria.ruc = i.taxpayer.identification
-        informacionTributaria.razonSocial = i.taxpayer.legalName
-        informacionTributaria.nombreComercial = i.establishmentBusinessName
-
-        if (i.invoice.accessKey!!.length == 49) {
-            informacionTributaria.claveAcceso = i.invoice.accessKey
+        if (tributaryInformation.invoice.accessKey!!.length == 49) {
+            informacionTributaria.claveAcceso = tributaryInformation.invoice.accessKey
             informacionTributaria.ambiente = informacionTributaria.claveAcceso.substring(23, 24)
             informacionTributaria.tipoEmision = informacionTributaria.claveAcceso.substring(39, 40)
         }
 
-        informacionTributaria.codDoc = i.invoice.codeDocument
-        informacionTributaria.estab = i.invoice.establishment
-        informacionTributaria.ptoEmi = i.invoice.emissionPoint
-        informacionTributaria.secuencial = i.invoice.sequence
-        informacionTributaria.dirMatriz = i.principalEstablishmentAddress
-        informacionTributaria.contribuyenteRimpe = i.taxpayer.rimpe
-        informacionTributaria.agenteRetencion = i.taxpayer.retentionAgent
+        informacionTributaria.codDoc = tributaryInformation.invoice.codeDocument
+        informacionTributaria.estab = tributaryInformation.invoice.establishment
+        informacionTributaria.ptoEmi = tributaryInformation.invoice.emissionPoint
+        informacionTributaria.secuencial = tributaryInformation.invoice.sequence
+        informacionTributaria.dirMatriz = tributaryInformation.principalEstablishmentAddress
+        informacionTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.rimpe
+        informacionTributaria.agenteRetencion = tributaryInformation.taxpayer.retentionAgent
 
         return informacionTributaria
     }
