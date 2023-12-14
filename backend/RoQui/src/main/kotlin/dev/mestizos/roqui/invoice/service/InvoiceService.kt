@@ -26,13 +26,15 @@ class InvoiceService {
     fun getInvoice(code: String, number: String): TributaryInformation {
         val invoice = invoiceRepository.findByCodeAndNumber(code, number)
         val taxpayer = taxPayerRepository.findById(1).get()
-        val establishment = establishmentRepository.finbByCode(invoice.establishment!!)
+        val establishment = establishmentRepository.findByCode(invoice.establishment!!)
+        val principalEstablishmentAddress = establishmentRepository.findPrincipal().address
 
         val tributaryInformation = TributaryInformation(
             invoice,
             taxpayer,
             establishment.address,
-            establishment.comercialName
+            principalEstablishmentAddress,
+            establishment.businessName
         )
 
         return tributaryInformation

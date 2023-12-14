@@ -51,19 +51,25 @@ class BuildInvoice(
     private fun buildInfoTributaria(): InfoTributaria {
         val informacionTributaria = InfoTributaria()
 
-        println("buildInfoTributaria")
         val i = invoiceService.getInvoice(code, number)
 
         informacionTributaria.ruc = i.taxpayer.identification
         informacionTributaria.razonSocial = i.taxpayer.legalName
-        informacionTributaria.nombreComercial = i.establishmentComercialName
-        informacionTributaria.claveAcceso = i.invoice.accessKey
+        informacionTributaria.nombreComercial = i.establishmentBusinessName
 
-        informacionTributaria.ambiente = informacionTributaria.claveAcceso.substring(23, 24)
-        informacionTributaria.tipoEmision = informacionTributaria.claveAcceso.substring(42, 43)
+        if (i.invoice.accessKey!!.length == 49) {
+            informacionTributaria.claveAcceso = i.invoice.accessKey
+            informacionTributaria.ambiente = informacionTributaria.claveAcceso.substring(23, 24)
+            informacionTributaria.tipoEmision = informacionTributaria.claveAcceso.substring(39, 40)
+        }
 
-        println(informacionTributaria.ambiente)
-        println(informacionTributaria.tipoEmision)
+        informacionTributaria.codDoc = i.invoice.codeDocument
+        informacionTributaria.estab = i.invoice.establishment
+        informacionTributaria.ptoEmi = i.invoice.emissionPoint
+        informacionTributaria.secuencial = i.invoice.sequence
+        informacionTributaria.dirMatriz = i.principalEstablishmentAddress
+        informacionTributaria.contribuyenteRimpe = i.taxpayer.rimpe
+        informacionTributaria.agenteRetencion = i.taxpayer.retentionAgent
 
         return informacionTributaria
     }

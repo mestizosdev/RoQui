@@ -7,5 +7,6 @@ data class TributaryInformation(
     val invoice: Invoice,
     val taxpayer: Taxpayer,
     val establishmentAddress: String? = null,
-    val establishmentComercialName: String? = null
+    val principalEstablishmentAddress: String? = null,
+    val establishmentBusinessName: String? = null
 )

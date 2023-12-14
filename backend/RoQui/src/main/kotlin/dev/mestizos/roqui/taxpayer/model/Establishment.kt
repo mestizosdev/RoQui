@@ -9,7 +9,7 @@ import org.hibernate.annotations.Immutable
 @Entity
 @Immutable
 @Table(name = "v_ele_establishments")
-class Establishments {
+class Establishment {
 
     @Id
     val id: Long? = null
@@ -20,9 +20,12 @@ class Establishments {
     @Column(name = "code")
     val code: String? = null
 
-    @Column(name = "comercial_name")
-    val comercialName: String? = null
+    @Column(name = "business_name")
+    val businessName: String? = null
 
     @Column(name = "address")
     val address: String? = null
+
+    @Column(name = "principal")
+    val principal: String? = null
 }
