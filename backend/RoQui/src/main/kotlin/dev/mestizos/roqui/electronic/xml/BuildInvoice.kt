@@ -59,6 +59,11 @@ class BuildInvoice(
         informacionTributaria.nombreComercial = i.establishmentComercialName
         informacionTributaria.claveAcceso = i.invoice.accessKey
 
+        informacionTributaria.ambiente = informacionTributaria.claveAcceso.substring(23, 24)
+        informacionTributaria.tipoEmision = informacionTributaria.claveAcceso.substring(42, 43)
+
+        println(informacionTributaria.ambiente)
+        println(informacionTributaria.tipoEmision)
 
         return informacionTributaria
     }
