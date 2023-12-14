@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/roqui/v1")
-class AuthorizeInvoiceRest {
+class InvoiceController {
 
     @Autowired
     lateinit var invoiceService: InvoiceService

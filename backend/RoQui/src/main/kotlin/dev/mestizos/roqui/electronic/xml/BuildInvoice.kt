@@ -1,28 +1,36 @@
 package dev.mestizos.roqui.electronic.xml
 
 import dev.mestizos.roqui.invoice.service.InvoiceService
+import dev.mestizos.roqui.util.FilesUtil
 import ec.gob.sri.invoice.v210.Factura
 import ec.gob.sri.invoice.v210.InfoTributaria
+import ec.gob.sri.invoice.v210.ObligadoContabilidad
 import java.io.StringWriter
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller
+import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
+import java.math.BigDecimal
+import java.text.SimpleDateFormat
 
 class BuildInvoice(
     val code: String,
     val number: String,
-    val invoiceService: InvoiceService
+    invoiceService: InvoiceService
 ) {
 
     private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
+    private val baseDirectory = invoiceService.getBaseDirectory()
 
     fun xml(): String {
         val factura = Factura()
+
         try {
             factura.id = "comprobante"
             factura.version = "2.1.0"
             factura.infoTributaria = buildInfoTributaria()
+            factura.infoFactura = buildInfoFactura()
 
             val jaxbContext = JAXBContext.newInstance(Factura::class.java)
             val marshaller = jaxbContext.createMarshaller()
@@ -34,9 +42,16 @@ class BuildInvoice(
                 marshaller.marshal(factura, stringWriter)
             }
 
+            val pathGenerated = FilesUtil
+                .directory(
+                    baseDirectory + "${File.separatorChar}Generated",
+                    tributaryInformation.invoice.date!!
+                )
+
             val out = OutputStreamWriter(
                 FileOutputStream(
-                    "/tmp/hola.xml"
+                    "$pathGenerated${File.separatorChar}" +
+                            "${factura.infoTributaria.claveAcceso}.xml"
                 ), "UTF-8"
             )
 
@@ -48,27 +63,52 @@ class BuildInvoice(
         return ""
     }
 
-    private fun buildInfoTributaria(): InfoTributaria {
-        val informacionTributaria = InfoTributaria()
 
-        informacionTributaria.ruc = tributaryInformation.taxpayer.identification
-        informacionTributaria.razonSocial = tributaryInformation.taxpayer.legalName
-        informacionTributaria.nombreComercial = tributaryInformation.establishmentBusinessName
+    private fun buildInfoTributaria(): InfoTributaria {
+        val infoTributaria = InfoTributaria()
+
+        infoTributaria.ruc = tributaryInformation.taxpayer.identification
+        infoTributaria.razonSocial = tributaryInformation.taxpayer.legalName
+        infoTributaria.nombreComercial = tributaryInformation.establishmentBusinessName
 
         if (tributaryInformation.invoice.accessKey!!.length == 49) {
-            informacionTributaria.claveAcceso = tributaryInformation.invoice.accessKey
-            informacionTributaria.ambiente = informacionTributaria.claveAcceso.substring(23, 24)
-            informacionTributaria.tipoEmision = informacionTributaria.claveAcceso.substring(39, 40)
+            infoTributaria.claveAcceso = tributaryInformation.invoice.accessKey
+            infoTributaria.ambiente = infoTributaria.claveAcceso.substring(23, 24)
+            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(39, 40)
         }
 
-        informacionTributaria.codDoc = tributaryInformation.invoice.codeDocument
-        informacionTributaria.estab = tributaryInformation.invoice.establishment
-        informacionTributaria.ptoEmi = tributaryInformation.invoice.emissionPoint
-        informacionTributaria.secuencial = tributaryInformation.invoice.sequence
-        informacionTributaria.dirMatriz = tributaryInformation.principalEstablishmentAddress
-        informacionTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.rimpe
-        informacionTributaria.agenteRetencion = tributaryInformation.taxpayer.retentionAgent
+        infoTributaria.codDoc = tributaryInformation.invoice.codeDocument
+        infoTributaria.estab = tributaryInformation.invoice.establishment
+        infoTributaria.ptoEmi = tributaryInformation.invoice.emissionPoint
+        infoTributaria.secuencial = tributaryInformation.invoice.sequence
+        infoTributaria.dirMatriz = tributaryInformation.principalEstablishmentAddress
+        infoTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.rimpe
+        infoTributaria.agenteRetencion = tributaryInformation.taxpayer.retentionAgent
 
-        return informacionTributaria
+        return infoTributaria
+    }
+    private fun buildInfoFactura(): Factura.InfoFactura {
+        val infoFactura = Factura.InfoFactura()
+
+        infoFactura.fechaEmision = SimpleDateFormat("dd/MM/yyyy").format(tributaryInformation.invoice.date)
+        infoFactura.dirEstablecimiento = tributaryInformation.establishmentAddress
+        infoFactura.contribuyenteEspecial = tributaryInformation.taxpayer.specialTaxpayer
+        if (tributaryInformation.taxpayer.forcedAccounting == "SI") {
+            infoFactura.obligadoContabilidad = ObligadoContabilidad.SI
+        } else {
+            infoFactura.obligadoContabilidad = ObligadoContabilidad.NO
+        }
+        infoFactura.tipoIdentificacionComprador = tributaryInformation.invoice.identificationType
+        infoFactura.identificacionComprador = tributaryInformation.invoice.identification
+        infoFactura.razonSocialComprador = tributaryInformation.invoice.legalName
+        infoFactura.direccionComprador = tributaryInformation.invoice.address
+        infoFactura.guiaRemision = tributaryInformation.invoice.deliveryNote
+        infoFactura.totalSinImpuestos = tributaryInformation.invoice.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+        infoFactura.importeTotal = tributaryInformation.invoice.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+        infoFactura.propina = BigDecimal(0).setScale(2)
+        infoFactura.totalDescuento = BigDecimal(0).setScale(2)
+        infoFactura.moneda = "DOLAR"
+
+        return infoFactura
     }
 }

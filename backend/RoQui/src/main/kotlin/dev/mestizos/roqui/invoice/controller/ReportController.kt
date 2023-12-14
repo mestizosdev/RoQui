@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/roqui/v1")
-class ReportInvoiceRest {
+class ReportController {
 
     @Autowired
     lateinit var reportInvoiceService: ReportInvoiceService
