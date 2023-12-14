@@ -21,6 +21,7 @@ class BuildInvoice(
 ) {
 
     private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
+    private val invoiceDetail = invoiceService.getInvoiceDetail(code, number)
     private val baseDirectory = invoiceService.getBaseDirectory()
 
     fun xml(): String {
@@ -31,6 +32,7 @@ class BuildInvoice(
             factura.version = "2.1.0"
             factura.infoTributaria = buildInfoTributaria()
             factura.infoFactura = buildInfoFactura()
+            factura.detalles = buildDetails()
 
             val jaxbContext = JAXBContext.newInstance(Factura::class.java)
             val marshaller = jaxbContext.createMarshaller()
@@ -62,7 +64,6 @@ class BuildInvoice(
         }
         return ""
     }
-
 
     private fun buildInfoTributaria(): InfoTributaria {
         val infoTributaria = InfoTributaria()
@@ -110,5 +111,25 @@ class BuildInvoice(
         infoFactura.moneda = "DOLAR"
 
         return infoFactura
+    }
+
+    private fun buildDetails(): Factura.Detalles {
+        val detalles = Factura.Detalles()
+
+        for (detail in invoiceDetail) {
+            val facturaDetalle = Factura.Detalles.Detalle()
+
+            facturaDetalle.codigoPrincipal = detail.principalCode
+            facturaDetalle.descripcion = detail.name
+            facturaDetalle.unidadMedida = detail.unit
+            facturaDetalle.cantidad = detail.quantity!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            facturaDetalle.precioUnitario = detail.unitPrice!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            facturaDetalle.descuento = BigDecimal(0).setScale(2)
+            facturaDetalle.precioTotalSinImpuesto = detail.totalPriceWithoutTax!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+
+            detalles.detalle.add(facturaDetalle)
+        }
+
+        return detalles
     }
 }

@@ -1,6 +1,7 @@
 package dev.mestizos.roqui.invoice.repository
 
 import dev.mestizos.roqui.invoice.model.Invoice
+import dev.mestizos.roqui.invoice.model.InvoiceDetail
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
@@ -24,5 +25,18 @@ class InvoiceRepositoryImpl : IInvoiceRepository {
             .resultList.get(0) as Invoice
 
         return invoice
+    }
+
+    override fun findDetailByCodeAndNumber(code: String, number: String): MutableList<InvoiceDetail> {
+        val invoiceDetail = entityManager.createQuery(
+            "from InvoiceDetail " +
+                    "where code = :code " +
+                    "and number = :number"
+        )
+            .setParameter("code", code)
+            .setParameter("number", number)
+            .resultList as MutableList<InvoiceDetail>
+
+        return invoiceDetail
     }
 }

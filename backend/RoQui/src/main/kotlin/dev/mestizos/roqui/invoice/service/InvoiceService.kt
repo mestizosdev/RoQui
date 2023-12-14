@@ -1,6 +1,7 @@
 package dev.mestizos.roqui.invoice.service
 
 import dev.mestizos.roqui.invoice.dto.TributaryInformation
+import dev.mestizos.roqui.invoice.model.InvoiceDetail
 import dev.mestizos.roqui.invoice.repository.IInvoiceRepository
 import dev.mestizos.roqui.parameter.repository.IParameterRepository
 import dev.mestizos.roqui.taxpayer.repository.IEstablishmentsRepository
@@ -30,6 +31,10 @@ class InvoiceService(
         )
 
         return tributaryInformation
+    }
+
+    fun getInvoiceDetail(code: String, number: String): MutableList<InvoiceDetail> {
+        return invoiceRepository.findDetailByCodeAndNumber(code, number)
     }
 
     fun getBaseDirectory(): String {
