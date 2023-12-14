@@ -57,4 +57,7 @@ class Invoice {
 
     @Column(name = "establishment_address")
     val establishmentAddress: String? = null
+
+    @Column(name = "access_key")
+    val accessKey: String? = null
 }
