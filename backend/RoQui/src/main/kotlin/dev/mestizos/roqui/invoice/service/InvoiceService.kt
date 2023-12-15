@@ -2,7 +2,8 @@ package dev.mestizos.roqui.invoice.service
 
 import dev.mestizos.roqui.invoice.dto.TaxTotal
 import dev.mestizos.roqui.invoice.dto.TributaryInformation
-import dev.mestizos.roqui.invoice.model.Information
+import dev.mestizos.roqui.information.model.Information
+import dev.mestizos.roqui.information.repository.IInformationRepository
 import dev.mestizos.roqui.invoice.model.InvoiceDetail
 import dev.mestizos.roqui.invoice.model.Payment
 import dev.mestizos.roqui.invoice.model.TaxDetail
@@ -17,7 +18,8 @@ class InvoiceService(
     private val invoiceRepository: IInvoiceRepository,
     private val taxPayerRepository: ITaxpayerRepository,
     private val establishmentRepository: IEstablishmentsRepository,
-    private val parameterRepository: IParameterRepository
+    private val parameterRepository: IParameterRepository,
+    private val informationRepository: IInformationRepository
 ) {
 
     fun count(code: String, number: String): Long {
@@ -63,7 +65,7 @@ class InvoiceService(
     }
 
     fun getInvoiceInformation(identification: String): MutableList<Information> {
-        return invoiceRepository.findInformationByIdentification(identification)
+        return informationRepository.findInformationByIdentification(identification)
     }
 
     fun getBaseDirectory(): String {

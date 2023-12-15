@@ -1,4 +1,4 @@
-package dev.mestizos.roqui.invoice.model
+package dev.mestizos.roqui.information.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
