@@ -49,7 +49,7 @@ class InvoiceService(
     }
 
     fun getInvoiceTax(code: String, number: String): MutableList<TaxTotal> {
-        return invoiceRepository.findTaxByCodeAndNumber(code, number)
+        return invoiceRepository.findTotalTaxByCodeAndNumber(code, number)
     }
 
     fun getBaseDirectory(): String {

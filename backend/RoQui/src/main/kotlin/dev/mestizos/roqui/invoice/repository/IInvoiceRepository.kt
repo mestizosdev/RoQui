@@ -16,5 +16,5 @@ interface IInvoiceRepository {
         line: Long
     ): MutableList<TaxDetail>
 
-    fun findTaxByCodeAndNumber(code: String, number: String): MutableList<TaxTotal>
+    fun findTotalTaxByCodeAndNumber(code: String, number: String): MutableList<TaxTotal>
 }

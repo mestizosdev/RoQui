@@ -3,6 +3,7 @@ package dev.mestizos.roqui.electronic.xml
 import dev.mestizos.roqui.invoice.service.InvoiceService
 import dev.mestizos.roqui.util.FilesUtil
 import ec.gob.sri.invoice.v210.Factura
+import ec.gob.sri.invoice.v210.Impuesto
 import ec.gob.sri.invoice.v210.InfoTributaria
 import ec.gob.sri.invoice.v210.ObligadoContabilidad
 import java.io.StringWriter
@@ -87,6 +88,7 @@ class BuildInvoice(
 
         return infoTributaria
     }
+
     private fun buildInfoFactura(): Factura.InfoFactura {
         val infoFactura = Factura.InfoFactura()
 
@@ -103,7 +105,8 @@ class BuildInvoice(
         infoFactura.razonSocialComprador = tributaryInformation.invoice.legalName
         infoFactura.direccionComprador = tributaryInformation.invoice.address
         infoFactura.guiaRemision = tributaryInformation.invoice.deliveryNote
-        infoFactura.totalSinImpuestos = tributaryInformation.invoice.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+        infoFactura.totalSinImpuestos =
+            tributaryInformation.invoice.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
         infoFactura.importeTotal = tributaryInformation.invoice.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
         infoFactura.propina = BigDecimal(0).setScale(2)
         infoFactura.totalDescuento = BigDecimal(0).setScale(2)
@@ -146,10 +149,29 @@ class BuildInvoice(
             facturaDetalle.precioUnitario = detail.unitPrice!!.setScale(2, BigDecimal.ROUND_HALF_UP)
             facturaDetalle.descuento = BigDecimal(0).setScale(2)
             facturaDetalle.precioTotalSinImpuesto = detail.totalPriceWithoutTax!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            facturaDetalle.impuestos = buildDetailTax(detail.principalCode!!, detail.line!!)
 
             detalles.detalle.add(facturaDetalle)
         }
 
         return detalles
+    }
+
+    private fun buildDetailTax(principalCode: String, line: Long): Factura.Detalles.Detalle.Impuestos? {
+        val impuestos = Factura.Detalles.Detalle.Impuestos()
+        val taxDetail = invoiceService.getInvoiceDetailTax(code, number, principalCode, line)
+
+        for (detail in taxDetail) {
+            val impuesto = Impuesto()
+            impuesto.codigo = detail.taxCode
+            impuesto.codigoPorcentaje = detail.percentageCode
+            impuesto.tarifa = detail.taxIva!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            impuesto.baseImponible = detail.taxBase!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            impuesto.valor = detail.value!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+
+            impuestos.impuesto.add(impuesto)
+        }
+
+        return impuestos
     }
 }

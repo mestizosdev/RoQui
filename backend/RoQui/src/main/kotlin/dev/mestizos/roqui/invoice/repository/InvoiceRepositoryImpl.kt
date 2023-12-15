@@ -65,9 +65,9 @@ class InvoiceRepositoryImpl : IInvoiceRepository {
         return taxDetail
     }
 
-    override fun findTaxByCodeAndNumber(code: String, number: String): MutableList<TaxTotal> {
+    override fun findTotalTaxByCodeAndNumber(code: String, number: String): MutableList<TaxTotal> {
         val taxTotalResult = entityManager.createQuery(
-            "SELECT taxCode, percentageCode, taxIva, sum(taxBase) as taxBase, sum(value) as value from TaxDetail " +
+            "SELECT taxCode, percentageCode, taxIva, sum(taxBase), sum(value) from TaxDetail " +
                     "where code = :code " +
                     "and number = :number " +
                     "group by taxCode, percentageCode, taxIva"
