@@ -17,6 +17,18 @@ class InvoiceRepositoryImpl : IInvoiceRepository {
 
     @PersistenceContext
     lateinit var entityManager: EntityManager
+    override fun countByCodeAndNumber(code: String, number: String): Long {
+        val count = entityManager.createQuery(
+            "select count(*) from Invoice " +
+                    "where code = :code " +
+                    "and number = :number"
+        )
+            .setParameter("code", code)
+            .setParameter("number", number)
+            .singleResult as Long
+
+        return count
+    }
 
     override fun findByCodeAndNumber(code: String, number: String): Invoice {
         val invoice = entityManager.createQuery(

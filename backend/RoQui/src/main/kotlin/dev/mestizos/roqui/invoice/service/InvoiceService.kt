@@ -16,8 +16,12 @@ class InvoiceService(
     private val invoiceRepository: IInvoiceRepository,
     private val taxPayerRepository: ITaxpayerRepository,
     private val establishmentRepository: IEstablishmentsRepository,
-    private val parameterRespository: IParameterRepository
+    private val parameterRepository: IParameterRepository
 ) {
+
+    fun count(code: String, number: String): Long {
+        return invoiceRepository.countByCodeAndNumber(code, number)
+    }
 
     fun getInvoiceAndTaxpayer(code: String, number: String): TributaryInformation {
         val invoice = invoiceRepository.findByCodeAndNumber(code, number)
@@ -58,6 +62,6 @@ class InvoiceService(
     }
 
     fun getBaseDirectory(): String {
-        return parameterRespository.findValueByName("Base Directory")
+        return parameterRepository.findValueByName("Base Directory")
     }
 }

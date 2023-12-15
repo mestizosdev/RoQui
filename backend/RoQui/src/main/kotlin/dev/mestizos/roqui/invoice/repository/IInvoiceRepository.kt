@@ -8,6 +8,7 @@ import dev.mestizos.roqui.invoice.model.TaxDetail
 
 interface IInvoiceRepository {
 
+    fun countByCodeAndNumber(code: String, number: String): Long
     fun findByCodeAndNumber(code: String, number: String): Invoice
     fun findDetailByCodeAndNumber(code: String, number: String): MutableList<InvoiceDetail>
     fun findDetailTax(

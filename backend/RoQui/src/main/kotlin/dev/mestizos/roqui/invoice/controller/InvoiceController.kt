@@ -20,17 +20,17 @@ class InvoiceController {
 
     @PostMapping("/invoice/authorize")
     fun postAuthorize(@RequestBody document: DocumentDto): ResponseEntity<Any> {
-        if (document.code == null || document.number == null) {
-            return ResponseEntity.badRequest().build()
+
+        if (invoiceService.count(document.code, document.number) == 0L) {
+            return ResponseEntity.notFound().build()
         }
-        else{
-            val buildInvoice = ElectronicDocument(
-                document.code,
-                document.number,
-                invoiceService
-            )
-            buildInvoice.send(TypeDocument.FACTURA)
-            return ResponseEntity.ok().build()
-        }
+
+        val buildInvoice = ElectronicDocument(
+            document.code,
+            document.number,
+            invoiceService
+        )
+        buildInvoice.send(TypeDocument.FACTURA)
+        return ResponseEntity.ok().build()
     }
 }
