@@ -17,11 +17,10 @@ import java.text.SimpleDateFormat
 class BuildInvoice(
     val code: String,
     val number: String,
-    invoiceService: InvoiceService
+    private val invoiceService: InvoiceService
 ) {
 
     private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
-    private val invoiceDetail = invoiceService.getInvoiceDetail(code, number)
     private val baseDirectory = invoiceService.getBaseDirectory()
 
     fun xml(): String {
@@ -110,10 +109,31 @@ class BuildInvoice(
         infoFactura.totalDescuento = BigDecimal(0).setScale(2)
         infoFactura.moneda = "DOLAR"
 
+        infoFactura.totalConImpuestos = buildTotals()
+
         return infoFactura
     }
 
+    private fun buildTotals(): Factura.InfoFactura.TotalConImpuestos? {
+        val totalConImpuestos = Factura.InfoFactura.TotalConImpuestos()
+        val taxTotals = invoiceService.getInvoiceTax(code, number)
+
+        for (taxTotal in taxTotals) {
+            val totalImpuesto = Factura.InfoFactura.TotalConImpuestos.TotalImpuesto()
+            totalImpuesto.codigo = taxTotal.taxCode
+            totalImpuesto.codigoPorcentaje = taxTotal.percentageCode
+            totalImpuesto.baseImponible = taxTotal.taxBase!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            totalImpuesto.tarifa = taxTotal.taxIva!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            totalImpuesto.valor = taxTotal.value!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+
+            totalConImpuestos.totalImpuesto.add(totalImpuesto)
+        }
+
+        return totalConImpuestos
+    }
+
     private fun buildDetails(): Factura.Detalles {
+        val invoiceDetail = invoiceService.getInvoiceDetail(code, number)
         val detalles = Factura.Detalles()
 
         for (detail in invoiceDetail) {
