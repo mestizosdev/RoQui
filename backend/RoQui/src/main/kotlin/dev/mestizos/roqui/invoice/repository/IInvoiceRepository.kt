@@ -1,10 +1,7 @@
 package dev.mestizos.roqui.invoice.repository
 
 import dev.mestizos.roqui.invoice.dto.TaxTotal
-import dev.mestizos.roqui.invoice.model.Invoice
-import dev.mestizos.roqui.invoice.model.InvoiceDetail
-import dev.mestizos.roqui.invoice.model.Payment
-import dev.mestizos.roqui.invoice.model.TaxDetail
+import dev.mestizos.roqui.invoice.model.*
 
 interface IInvoiceRepository {
 
@@ -20,4 +17,5 @@ interface IInvoiceRepository {
 
     fun findTotalTaxByCodeAndNumber(code: String, number: String): MutableList<TaxTotal>
     fun findPaymentByCodeAndNumber(code: String, number: String): MutableList<Payment>
+    fun findInformationByIdentification(identification: String): MutableList<Information>
 }

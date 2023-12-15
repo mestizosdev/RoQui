@@ -1,10 +1,7 @@
 package dev.mestizos.roqui.invoice.repository
 
 import dev.mestizos.roqui.invoice.dto.TaxTotal
-import dev.mestizos.roqui.invoice.model.Invoice
-import dev.mestizos.roqui.invoice.model.InvoiceDetail
-import dev.mestizos.roqui.invoice.model.Payment
-import dev.mestizos.roqui.invoice.model.TaxDetail
+import dev.mestizos.roqui.invoice.model.*
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
@@ -17,6 +14,7 @@ class InvoiceRepositoryImpl : IInvoiceRepository {
 
     @PersistenceContext
     lateinit var entityManager: EntityManager
+
     override fun countByCodeAndNumber(code: String, number: String): Long {
         val count = entityManager.createQuery(
             "select count(*) from Invoice " +
@@ -118,5 +116,16 @@ class InvoiceRepositoryImpl : IInvoiceRepository {
             .resultList as MutableList<Payment>
 
         return payment
+    }
+
+    override fun findInformationByIdentification(identification: String): MutableList<Information> {
+        val information = entityManager.createQuery(
+            "from Information " +
+                    "where identification = :identification"
+        )
+            .setParameter("identification", identification)
+            .resultList as MutableList<Information>
+
+        return information
     }
 }

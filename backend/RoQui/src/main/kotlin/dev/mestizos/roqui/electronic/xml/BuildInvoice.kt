@@ -30,6 +30,9 @@ class BuildInvoice(
             factura.infoTributaria = buildInfoTributaria()
             factura.infoFactura = buildInfoFactura()
             factura.detalles = buildDetails()
+            factura.infoAdicional = buildAdditionalInformation(
+                tributaryInformation.invoice.identification!!
+            )
 
             val jaxbContext = JAXBContext.newInstance(Factura::class.java)
             val marshaller = jaxbContext.createMarshaller()
@@ -60,6 +63,21 @@ class BuildInvoice(
             println(e.message)
         }
         return ""
+    }
+
+    private fun buildAdditionalInformation(identification: String): Factura.InfoAdicional? {
+        val infoAdicional = Factura.InfoAdicional()
+        val additionalInformation = invoiceService.getInvoiceInformation(identification)
+
+        for (information in additionalInformation) {
+            val campoAdicional = Factura.InfoAdicional.CampoAdicional()
+            campoAdicional.nombre = information.name
+            campoAdicional.value = information.value
+
+            infoAdicional.campoAdicional.add(campoAdicional)
+        }
+
+        return infoAdicional
     }
 
     private fun buildInfoTributaria(): InfoTributaria {
