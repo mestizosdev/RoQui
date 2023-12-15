@@ -2,10 +2,7 @@ package dev.mestizos.roqui.electronic.xml
 
 import dev.mestizos.roqui.invoice.service.InvoiceService
 import dev.mestizos.roqui.util.FilesUtil
-import ec.gob.sri.invoice.v210.Factura
-import ec.gob.sri.invoice.v210.Impuesto
-import ec.gob.sri.invoice.v210.InfoTributaria
-import ec.gob.sri.invoice.v210.ObligadoContabilidad
+import ec.gob.sri.invoice.v210.*
 import java.io.StringWriter
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller
@@ -114,7 +111,26 @@ class BuildInvoice(
 
         infoFactura.totalConImpuestos = buildTotals()
 
+        infoFactura.pagos = buildPayments()
+
         return infoFactura
+    }
+
+    private fun buildPayments(): Pagos {
+        val pagos = Pagos()
+        val payments = invoiceService.getInvoicePayment(code, number)
+
+        for (payment in payments) {
+            val pago = Pagos.Pago()
+            pago.formaPago = payment.wayPay
+            pago.total = payment.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            pago.plazo = payment.paymentDeadline
+            pago.unidadTiempo = payment.unitTime
+
+            pagos.pago.add(pago)
+        }
+
+        return pagos
     }
 
     private fun buildTotals(): Factura.InfoFactura.TotalConImpuestos? {

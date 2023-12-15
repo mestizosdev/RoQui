@@ -3,6 +3,7 @@ package dev.mestizos.roqui.invoice.service
 import dev.mestizos.roqui.invoice.dto.TaxTotal
 import dev.mestizos.roqui.invoice.dto.TributaryInformation
 import dev.mestizos.roqui.invoice.model.InvoiceDetail
+import dev.mestizos.roqui.invoice.model.Payment
 import dev.mestizos.roqui.invoice.model.TaxDetail
 import dev.mestizos.roqui.invoice.repository.IInvoiceRepository
 import dev.mestizos.roqui.parameter.repository.IParameterRepository
@@ -50,6 +51,10 @@ class InvoiceService(
 
     fun getInvoiceTax(code: String, number: String): MutableList<TaxTotal> {
         return invoiceRepository.findTotalTaxByCodeAndNumber(code, number)
+    }
+
+    fun getInvoicePayment(code: String, number: String): MutableList<Payment> {
+        return invoiceRepository.findPaymentByCodeAndNumber(code, number)
     }
 
     fun getBaseDirectory(): String {

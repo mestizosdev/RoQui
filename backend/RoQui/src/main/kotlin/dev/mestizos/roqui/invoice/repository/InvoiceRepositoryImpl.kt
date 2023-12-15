@@ -3,6 +3,7 @@ package dev.mestizos.roqui.invoice.repository
 import dev.mestizos.roqui.invoice.dto.TaxTotal
 import dev.mestizos.roqui.invoice.model.Invoice
 import dev.mestizos.roqui.invoice.model.InvoiceDetail
+import dev.mestizos.roqui.invoice.model.Payment
 import dev.mestizos.roqui.invoice.model.TaxDetail
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -92,5 +93,18 @@ class InvoiceRepositoryImpl : IInvoiceRepository {
         }
 
         return taxTotal
+    }
+
+    override fun findPaymentByCodeAndNumber(code: String, number: String): MutableList<Payment> {
+        val payment = entityManager.createQuery(
+            "from Payment " +
+                    "where code = :code " +
+                    "and number = :number"
+        )
+            .setParameter("code", code)
+            .setParameter("number", number)
+            .resultList as MutableList<Payment>
+
+        return payment
     }
 }
