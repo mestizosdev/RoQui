@@ -1,17 +1,23 @@
 package dev.mestizos.roqui.util
 
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 class DateUtil {
 
     companion object {
-        fun toDate(fecha: String): Date {
+        fun toDate(date: String): Date {
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
-            val fechaInDateType: Date
-            fechaInDateType = simpleDateFormat.parse(fecha)
+            val dateInDateType: Date = simpleDateFormat.parse(date)
 
-            return fechaInDateType
+            return dateInDateType
+        }
+
+        fun accessKeyToDate(accessKey: String): Date {
+            val dateAccessKey = accessKey.substring(0, 8)
+            val formatter: DateFormat = SimpleDateFormat("ddMMyyyy")
+            return formatter.parse(dateAccessKey)
         }
     }
 }

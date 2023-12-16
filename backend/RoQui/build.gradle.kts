@@ -38,6 +38,10 @@ dependencies {
 //	kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
 	implementation("dev.mestizos.printer:RoquiPrinter:1.0.0")
 	implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
+	// Signer
+	implementation("dev.mestizos.signer:RoquiSigner:1.0.0")
+	implementation("com.googlecode.xades4j:xades4j:1.7.0")
+	implementation("com.sun.xml.bind:jaxb-impl:2.3.9")
 }
 
 tasks.withType<KotlinCompile> {

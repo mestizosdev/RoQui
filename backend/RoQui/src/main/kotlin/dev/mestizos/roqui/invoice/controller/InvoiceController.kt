@@ -3,6 +3,7 @@ package dev.mestizos.roqui.invoice.controller
 import dev.mestizos.roqui.electronic.ElectronicDocument
 import dev.mestizos.roqui.electronic.TypeDocument
 import dev.mestizos.roqui.invoice.service.InvoiceService
+import dev.mestizos.roqui.parameter.service.ParameterService
 import dev.mestizos.roqui.util.dto.DocumentDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -18,6 +19,9 @@ class InvoiceController {
     @Autowired
     lateinit var invoiceService: InvoiceService
 
+    @Autowired
+    lateinit var parameterService: ParameterService
+
     @PostMapping("/invoice/authorize")
     fun postAuthorize(@RequestBody document: DocumentDto): ResponseEntity<Any> {
 
@@ -28,9 +32,10 @@ class InvoiceController {
         val buildInvoice = ElectronicDocument(
             document.code,
             document.number,
-            invoiceService
+            invoiceService,
+            parameterService
         )
-        buildInvoice.send(TypeDocument.FACTURA)
+        buildInvoice.process(TypeDocument.FACTURA)
         return ResponseEntity.ok().build()
     }
 }

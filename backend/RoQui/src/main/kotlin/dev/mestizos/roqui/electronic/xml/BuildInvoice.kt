@@ -59,10 +59,12 @@ class BuildInvoice(
 
             marshaller.marshal(factura, out)
             println(stringWriter)
+
+            return factura.infoTributaria.claveAcceso
         } catch (e: Exception) {
             println(e.message)
+            return ""
         }
-        return ""
     }
 
     private fun buildAdditionalInformation(identification: String): Factura.InfoAdicional? {
