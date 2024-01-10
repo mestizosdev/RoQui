@@ -2,12 +2,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	war
-	id("org.springframework.boot") version "3.2.0"
+	id("org.springframework.boot") version "3.2.1"
 	id("io.spring.dependency-management") version "1.1.4"
-	kotlin("jvm") version "1.9.20"
-	kotlin("plugin.spring") version "1.9.20"
-	kotlin("plugin.jpa") version "1.9.20"
-	kotlin("kapt") version "1.9.20"
+	kotlin("jvm") version "1.9.21"
+	kotlin("plugin.spring") version "1.9.21"
+	kotlin("plugin.jpa") version "1.9.21"
+	kotlin("kapt") version "1.9.21"
 }
 
 group = "dev.mestizos"
@@ -36,13 +36,19 @@ dependencies {
 	// AutoMapper Enity to DTO
 	implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
 //	kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
+	// Printer
 	implementation("dev.mestizos.printer:RoquiPrinter:1.0.0")
 	implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
 	// Signer
 	implementation("dev.mestizos.signer:RoquiSigner:1.0.0")
 	implementation("com.googlecode.xades4j:xades4j:1.7.0")
 	implementation("com.sun.xml.bind:jaxb-impl:2.3.9")
-}
+	// Client SRI
+	implementation("dev.mestizos.client:RoquiClientSri:1.0.0")
+	implementation("com.sun.xml.ws:jaxws-rt:4.0.0")
+	implementation("com.thoughtworks.xstream:xstream:1.4.20")
+	implementation("commons-io:commons-io:2.12.0")
+		}
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {

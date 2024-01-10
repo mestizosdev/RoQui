@@ -1,5 +1,6 @@
 package dev.mestizos.roqui.electronic
 
+import dev.mestizos.roqui.electronic.send.SendXML
 import dev.mestizos.roqui.electronic.sign.SignerXml
 import dev.mestizos.roqui.electronic.xml.BuildInvoice
 import dev.mestizos.roqui.invoice.service.InvoiceService
@@ -20,8 +21,17 @@ class ElectronicDocument(
             accessKey = build.xml()
         }
 
+        if (accessKey.isEmpty()) {
+            return ""
+        }
+
         val signer = SignerXml(accessKey, parameterService)
-        signer.sign()
+        if (signer.sign()) {
+            val xml = SendXML(accessKey, parameterService)
+            xml.send()
+            return accessKey
+        }
+
         return ""
     }
 
