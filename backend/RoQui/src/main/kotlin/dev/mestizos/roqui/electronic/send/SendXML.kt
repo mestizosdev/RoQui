@@ -1,9 +1,10 @@
 package dev.mestizos.roqui.electronic.send
 
+import dev.mestizos.client.sri.Check
+import dev.mestizos.client.sri.Send
 import dev.mestizos.roqui.parameter.service.ParameterService
 import dev.mestizos.roqui.util.DateUtil
 import dev.mestizos.roqui.util.FilesUtil
-import dev.mestizos.client.sri.Send
 import java.io.File
 
 class SendXML(
@@ -25,6 +26,9 @@ class SendXML(
             val statusSend = Send.execute(
                 "$pathSigned${File.separatorChar}$accessKey.xml"
             )
+
+            val statusCheck = Check.execute(accessKey)
+
 
             return true
         }
