@@ -15,11 +15,11 @@ import java.text.SimpleDateFormat
 class BuildInvoice(
     val code: String,
     val number: String,
+    private val baseDirectory: String,
     private val invoiceService: InvoiceService
 ) {
 
     private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
-    private val baseDirectory = invoiceService.getBaseDirectory()
 
     fun xml(): String {
         val factura = Factura()
