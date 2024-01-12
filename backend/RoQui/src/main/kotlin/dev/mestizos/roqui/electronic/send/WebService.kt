@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component
 class WebService {
 
     @Value("\${sri.url.ws.developer.reception}")
-    lateinit var developerReception: String
+    lateinit var developmentReception: String
 
     @Value("\${sri.url.ws.developer.authorization}")
-    lateinit var developerAuthorization: String
+    lateinit var developmentAuthorization: String
 
     @Value("\${sri.url.ws.production.reception}")
     lateinit var productionReception: String
@@ -19,8 +19,8 @@ class WebService {
     lateinit var productionAuthorization: String
 
     fun printPropertyValues() {
-        println("Developer reception: $developerReception")
-        println("Developer authorization: $developerAuthorization")
+        println("Developer reception: $developmentReception")
+        println("Developer authorization: $developmentAuthorization")
         println("Production reception: $productionReception")
         println("Production authorization: $productionAuthorization")
     }
