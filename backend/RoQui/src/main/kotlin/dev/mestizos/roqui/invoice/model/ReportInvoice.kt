@@ -32,7 +32,7 @@ class ReportInvoice {
     val identification: String? = null
 
     @Column(name = "legal_name")
-    val legal_name: String? = null
+    val legalName: String? = null
 
     @Column(name = "email")
     val email: String? = null

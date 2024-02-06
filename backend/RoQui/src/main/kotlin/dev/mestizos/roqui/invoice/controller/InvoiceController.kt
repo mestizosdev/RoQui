@@ -3,6 +3,7 @@ package dev.mestizos.roqui.invoice.controller
 import dev.mestizos.roqui.electronic.ElectronicDocument
 import dev.mestizos.roqui.electronic.TypeDocument
 import dev.mestizos.roqui.electronic.send.WebService
+import dev.mestizos.roqui.electronic.service.DocumentService
 import dev.mestizos.roqui.invoice.service.InvoiceService
 import dev.mestizos.roqui.parameter.service.ParameterService
 import dev.mestizos.roqui.util.dto.DocumentDto
@@ -24,6 +25,9 @@ class InvoiceController {
     lateinit var parameterService: ParameterService
 
     @Autowired
+    lateinit var documentService: DocumentService
+
+    @Autowired
     lateinit var webService: WebService
 
     @PostMapping("/invoice/authorize")
@@ -38,7 +42,8 @@ class InvoiceController {
             document.number,
             invoiceService,
             webService,
-            parameterService
+            parameterService,
+            documentService
         )
 
         buildInvoice.process(TypeDocument.FACTURA)

@@ -34,7 +34,7 @@ class ReportInvoiceService {
                 date = it.date,
                 total = it.total,
                 identification = it.identification,
-                legal_name = it.legal_name,
+                legalName = it.legalName,
                 email = it.email,
                 status = it.status
             )

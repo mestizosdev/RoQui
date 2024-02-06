@@ -1,15 +1,14 @@
 package dev.mestizos.roqui.electronic.send
 
+import dev.mestizos.client.sri.Check
 import dev.mestizos.client.sri.Send
+import dev.mestizos.definition.AutorizacionEstado
 import dev.mestizos.roqui.util.DateUtil
 import dev.mestizos.roqui.util.FilesUtil
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.Mensaje
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
 import java.io.File
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URI
 
 class SendXML(
     private val accessKey: String,
@@ -21,14 +20,9 @@ class SendXML(
 
         val ambientType = getAmbientType(accessKey)
 
-        if (ambientType == AmbientType.PRODUCTION) {
-            if (!isWebServiceAlive(webService.productionReception)) {
-                return getErrorResponse(webService.productionReception)
-            }
-        } else {
-            if (!isWebServiceAlive(webService.developmentReception)) {
-                return getErrorResponse(webService.developmentReception)
-            }
+        val (status, message) = isAliveService(ambientType)
+        if (!status) {
+            return getErrorResponse(message)
         }
 
         val pathSigned = FilesUtil
@@ -42,12 +36,29 @@ class SendXML(
         )
 
         return statusSend
+    }
 
+    fun check(): AutorizacionEstado {
+        val ambientType = getAmbientType(accessKey)
 
-//        val statusCheck = Check.execute(accessKey)
-//
-//
-//        return true
+        val response = Check.execute(accessKey)
+        return response
+    }
+
+    private fun isAliveService(ambientType: AmbientType): Pair<Boolean, String> {
+        if (ambientType == AmbientType.PRODUCTION) {
+            if (!WebService.isAlive(webService.productionReception)) {
+                val message = webService.productionReception
+                return false to message
+            }
+        } else {
+            if (!WebService.isAlive(webService.developmentReception)) {
+                val message = webService.developmentReception
+                return false to message
+            }
+        }
+
+        return true to ""
     }
 
     private fun getAmbientType(accessKey: String): AmbientType {
@@ -56,25 +67,6 @@ class SendXML(
         } else {
             AmbientType.DEVELOPMENT
         }
-    }
-
-    private fun isWebServiceAlive(urlWebServices: String): Boolean {
-        var c: HttpURLConnection? = null
-        try {
-            val u = URI(urlWebServices).toURL()
-            c = u.openConnection() as HttpURLConnection
-            c.requestMethod = "GET"
-            c.inputStream
-            if (c.responseCode == 200) {
-                return true
-            }
-        } catch (e: IOException) {
-            println("Error SRI web service connection : " + e.message)
-            return false
-        } finally {
-            c?.disconnect()
-        }
-        return false
     }
 
     private fun getErrorResponse(webServiceUrl: String): RespuestaSolicitud {

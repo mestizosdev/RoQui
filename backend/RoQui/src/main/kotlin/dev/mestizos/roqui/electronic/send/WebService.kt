@@ -2,6 +2,9 @@ package dev.mestizos.roqui.electronic.send
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URI
 
 @Component
 class WebService {
@@ -23,5 +26,26 @@ class WebService {
         println("Developer authorization: $developmentAuthorization")
         println("Production reception: $productionReception")
         println("Production authorization: $productionAuthorization")
+    }
+
+    companion object {
+        fun isAlive(urlWebServices: String): Boolean {
+            var c: HttpURLConnection? = null
+            try {
+                val u = URI(urlWebServices).toURL()
+                c = u.openConnection() as HttpURLConnection
+                c.requestMethod = "GET"
+                c.inputStream
+                if (c.responseCode == 200) {
+                    return true
+                }
+            } catch (e: IOException) {
+                println("Error SRI web service connection : " + e.message)
+                return false
+            } finally {
+                c?.disconnect()
+            }
+            return false
+        }
     }
 }
