@@ -1,5 +1,6 @@
 package dev.mestizos.roqui.electronic
 
+import dev.mestizos.definition.AutorizacionEstado
 import dev.mestizos.roqui.electronic.model.Document
 import dev.mestizos.roqui.electronic.send.SendXML
 import dev.mestizos.roqui.electronic.send.WebService
@@ -8,9 +9,11 @@ import dev.mestizos.roqui.electronic.sign.SignerXml
 import dev.mestizos.roqui.electronic.xml.BuildInvoice
 import dev.mestizos.roqui.invoice.service.InvoiceService
 import dev.mestizos.roqui.parameter.service.ParameterService
+import dev.mestizos.roqui.util.DateUtil
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
 import java.time.LocalDateTime
+import kotlin.NoSuchElementException
 
 class ElectronicDocument(
     val code: String,
@@ -53,7 +56,67 @@ class ElectronicDocument(
             return accessKey
         }
 
-        return ""
+        return statusResponse
+    }
+
+    fun check() {
+        val baseDirectory = parameterService.getBaseDirectory()
+        val xml = SendXML(accessKey, baseDirectory, webService)
+        val response = xml.check()
+
+        saveResponse(response)
+    }
+
+    private fun saveResponse(response: AutorizacionEstado): String {
+        var message = ""
+
+        if (response.autorizacion.mensajes != null) {
+            for (i in response.autorizacion.mensajes.mensaje.indices) {
+                val messageResponse = response.autorizacion.mensajes.mensaje[i]
+                if (messageResponse.mensaje != null) {
+                    message = "$message ${messageResponse.mensaje} ${messageResponse.informacionAdicional}"
+                }
+            }
+        }
+
+        try {
+            val document = documentService.getByCodeAndNumber(code, number)
+
+            if (document.observation!!.length > 2400){
+                document.observation = ""
+            }
+
+            document.observation = "$message ${document.observation}"
+
+            if (response.autorizacion.fechaAutorizacion != null) {
+               document.observation = " | ${response.autorizacion.numeroAutorizacion} " +
+                       "${response.autorizacion.fechaAutorizacion} ${document.observation}"
+
+               document.authorization = response.autorizacion.numeroAutorizacion
+
+               document.authorizationDate = DateUtil.extractDate(
+                   response.autorizacion.fechaAutorizacion
+               )
+            }
+            document.status = response.autorizacion.estado
+
+            documentService.saveDocument(document)
+        } catch (e: NoSuchElementException){
+            val document = Document(code, number, message, response.autorizacion.estado)
+
+            if (response.autorizacion.fechaAutorizacion != null) {
+                document.observation = " | ${response.autorizacion.numeroAutorizacion} " +
+                        "${response.autorizacion.fechaAutorizacion} ${document.observation}"
+
+                document.authorization = response.autorizacion.numeroAutorizacion
+
+                document.authorizationDate = DateUtil.extractDate(
+                    response.autorizacion.fechaAutorizacion
+                )
+            }
+            documentService.saveDocument(document)
+        }
+        return response.autorizacion.estado
     }
 
     private fun saveResponse(response: RespuestaSolicitud): String {
@@ -81,15 +144,14 @@ class ElectronicDocument(
             }
         }
 
-        if (documentService.getByCodeAndNumber(code, number).id == null){
-            val document = Document(code, number, message, response.estado)
-            documentService.saveDocument(document)
-        }
-        else {
+        try {
             val document = documentService.getByCodeAndNumber(code, number)
 
             document.observation = message + " | " + document.observation
             document.status = response.estado
+            documentService.saveDocument(document)
+        } catch (e: NoSuchElementException){
+            val document = Document(code, number, message, response.estado)
             documentService.saveDocument(document)
         }
 

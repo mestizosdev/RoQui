@@ -11,10 +11,6 @@ class DocumentService(private val documentRepository: IDocumentRepository) {
         documentRepository.saveDocument(document)
     }
 
-    fun getById(id: Long): Document {
-        return documentRepository.findById(id)
-    }
-
     fun getByCodeAndNumber(code: String, number: String): Document {
         return documentRepository.findByCodeAndNumber(code, number)
     }
