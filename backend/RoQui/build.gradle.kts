@@ -39,6 +39,11 @@ dependencies {
 	// Printer
 	implementation("dev.mestizos.printer:RoquiPrinter:1.0.0")
 	implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
+	implementation("com.sun.xml.ws:jaxws-rt:4.0.1")
+	implementation("net.sf.jasperreports:jasperreports:6.21.2")
+	implementation("net.sf.barcode4j:barcode4j:2.1")
+	implementation("org.apache.xmlgraphics:batik-all:1.17")
+	implementation("com.github.librepdf:openpdf:1.3.30")
 	// Signer
 	implementation("dev.mestizos.signer:RoquiSigner:1.0.0")
 	implementation("com.googlecode.xades4j:xades4j:1.7.0")

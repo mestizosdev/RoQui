@@ -19,4 +19,8 @@ class ParameterService(
     fun getCertificatePassword(): String {
         return parameterRepository.findValueByName("Certificate Password")
     }
+
+    fun getPathLogo(): String {
+        return parameterRepository.findValueByName("Logo")
+    }
 }

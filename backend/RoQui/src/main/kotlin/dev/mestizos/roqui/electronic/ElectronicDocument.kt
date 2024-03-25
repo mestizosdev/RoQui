@@ -7,6 +7,7 @@ import dev.mestizos.roqui.electronic.send.WebService
 import dev.mestizos.roqui.electronic.service.DocumentService
 import dev.mestizos.roqui.electronic.sign.SignerXml
 import dev.mestizos.roqui.electronic.xml.BuildInvoice
+import dev.mestizos.roqui.electronic.xml.PdfInvoice
 import dev.mestizos.roqui.invoice.service.InvoiceService
 import dev.mestizos.roqui.parameter.service.ParameterService
 import dev.mestizos.roqui.util.DateUtil
@@ -38,6 +39,10 @@ class ElectronicDocument(
         if (accessKey.isEmpty()) {
             return ""
         }
+
+        val pathLogo = parameterService.getPathLogo()
+        val printPdf = PdfInvoice(accessKey, baseDirectory, pathLogo)
+        printPdf.pdf()
 
         val certificatePath = parameterService.getCertificatePath()
         val certificatePassword = parameterService.getCertificatePassword()
